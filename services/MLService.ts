@@ -34,6 +34,9 @@ export class MLService {
 
     async initialize() {
         try {
+            if (this.isInitialized) {
+                return
+            }
             console.log('Initializing ML Service with Kaggle dataset...')
 
             // Wait for TensorFlow.js to be ready
@@ -128,16 +131,8 @@ export class MLService {
         console.log('Generating embeddings for', this.kaggleMedicineDatabase.length, 'medicines...')
 
         try {
-            // Load a pre-trained text embedding model (USE - Universal Sentence Encoder)
-            const modelUrl = 'https://tfhub.dev/google/universal-sentence-encoder/4'
-            
-            try {
-                this.textEncoder = await tf.loadLayersModel(modelUrl)
-                console.log('Loaded Universal Sentence Encoder')
-            } catch (error) {
-                console.warn('Could not load USE model, using simple text embeddings')
-                this.textEncoder = null
-            }
+            // Skip external model loading in browser to avoid CORS/peer conflicts
+            this.textEncoder = null
 
             // Generate embeddings for each medicine
             for (const medicine of this.kaggleMedicineDatabase) {
@@ -169,16 +164,8 @@ export class MLService {
         if (!this.textEncoder) {
             return this.generateSimpleTextEmbedding(text)
         }
-
-        try {
-            const embeddings = await this.textEncoder.predict(tf.tensor([text])) as tf.Tensor
-            const embeddingArray = await embeddings.data()
-            embeddings.dispose()
-            return Array.from(embeddingArray)
-        } catch (error: any) {
-            console.warn('ML embedding failed, using simple embedding')
-            return this.generateSimpleTextEmbedding(text)
-        }
+        // Fallback path won't be reached since textEncoder is null above
+        return this.generateSimpleTextEmbedding(text)
     }
 
     private generateSimpleTextEmbedding(text: string, size: number = 512): number[] {
