@@ -249,24 +249,40 @@ export default function Home() {
         console.log('Medicine info:', medicineInfo)
         
         if (medicineInfo) {
-          setCurrentMedicine(medicineInfo)
-          
-          // Create history entry with proper structure matching Kaggle data
-          const historyEntry = {
+          // Normalize Kaggle data to UI Medicine shape
+          const usesArray = Array.isArray(medicineInfo.uses)
+            ? medicineInfo.uses
+            : typeof medicineInfo.uses === 'string'
+              ? medicineInfo.uses.split(',').map((u: string) => u.trim()).filter((u: string) => u.length > 0)
+              : []
+
+          const sideEffectsArray = Array.isArray(medicineInfo.sideEffects)
+            ? medicineInfo.sideEffects
+            : typeof medicineInfo.sideEffects === 'string'
+              ? medicineInfo.sideEffects.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
+              : []
+
+          const normalizedMedicine = {
             id: medicineInfo.id,
             name: medicineInfo.name,
-            genericName: medicineInfo.composition || medicineInfo.genericName, // Kaggle uses 'composition'
-            manufacturer: medicineInfo.manufacturer,
-            category: medicineInfo.type || medicineInfo.category, // Kaggle uses 'type'
-            dosage: medicineInfo.composition, // Store composition as dosage info
-            uses: medicineInfo.uses,
-            sideEffects: medicineInfo.sideEffects ? medicineInfo.sideEffects.split(',').map(s => s.trim()) : [],
+            genericName: medicineInfo.composition || medicineInfo.genericName || '',
+            manufacturer: medicineInfo.manufacturer || '',
+            category: (medicineInfo as any).type || (medicineInfo as any).category || '',
+            dosage: {
+              min: '-',
+              max: '-',
+              frequency: 'Refer leaflet'
+            },
+            uses: usesArray,
+            sideEffects: sideEffectsArray,
             confidence: prediction.confidence,
             timestamp: new Date().toISOString(),
             imageData
           }
-          
-          addToHistory(historyEntry)
+
+          // Update current medicine and history with normalized shape
+          setCurrentMedicine(normalizedMedicine)
+          addToHistory(normalizedMedicine)
           
           // Speak the results
           const message = formatMedicineMessage(medicineInfo, language)

@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs'
-import { createWorker } from 'tesseract.js'
+import { createWorker, PSM } from 'tesseract.js'
 
 interface MedicinePrediction {
     medicineId: string
@@ -64,9 +64,11 @@ export class MLService {
 
             // Try multiple sources for Kaggle medicine data
             const kaggleDataSources = [
+                // Prefer the full Kaggle DB if available in public/data
+                '/data/kaggle_medicine_db.json',
+                // Fallbacks
                 '/data/kaggle-medicine-az.json',
-                '/api/kaggle-medicines',
-                '/kaggle_medicine_db.json',
+                '/api/medicines',
                 '/data/medicine-az-dataset.json'
             ]
 
@@ -87,7 +89,7 @@ export class MLService {
                             } else if (data.medicines && Array.isArray(data.medicines)) {
                                 medicines = data.medicines
                             } else {
-                                medicines = Object.values(data)
+                                medicines = (Object as any).values(data)
                             }
 
                             // Convert to standardized format
@@ -109,14 +111,14 @@ export class MLService {
                             }
                         }
                     }
-                } catch (error) {
-                    console.log(`Failed to load from ${source}:`, error.message)
+                } catch (error: any) {
+                    console.log(`Failed to load from ${source}:`, error?.message || error)
                 }
             }
 
             throw new Error('Could not load Kaggle medicine database from any source')
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load Kaggle medicine database:', error)
             throw error
         }
@@ -156,7 +158,7 @@ export class MLService {
             }
 
             console.log('Generated embeddings for all medicines')
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to generate embeddings:', error)
             // Fallback to simple embeddings
             this.generateFallbackEmbeddings()
@@ -173,7 +175,7 @@ export class MLService {
             const embeddingArray = await embeddings.data()
             embeddings.dispose()
             return Array.from(embeddingArray)
-        } catch (error) {
+        } catch (error: any) {
             console.warn('ML embedding failed, using simple embedding')
             return this.generateSimpleTextEmbedding(text)
         }
@@ -465,7 +467,7 @@ export class MLService {
             const hasRealContent = await this.detectRealContent(imageBlob)
             return hasRealContent
 
-        } catch (error) {
+        } catch (error: any) {
             console.log('❌ Image validation failed:', error)
             return false
         }
@@ -502,13 +504,13 @@ export class MLService {
 
             console.log('📊 Content analysis - Brightness:', avgBrightness.toFixed(1), 'Variance:', variance.toFixed(1))
 
-            if (variance < 50 || avgBrightness > 245 || avgBrightness < 10) {
+            if (variance < 20 || avgBrightness > 245 || avgBrightness < 10) {
                 return false
             }
 
             return this.detectTextualStructure(canvas, ctx)
 
-        } catch (error) {
+        } catch (error: any) {
             return false
         }
     }
@@ -541,7 +543,7 @@ export class MLService {
             }
 
             return edgeCount / sampleSize > 0.1
-        } catch (error) {
+        } catch (error: any) {
             return false
         }
     }
@@ -551,25 +553,46 @@ export class MLService {
             console.log('🤖 Running OCR...')
             const worker = await createWorker('eng')
 
-            const { data: { text, confidence } } = await worker.recognize(imageBlob)
+            // First pass OCR
+            let { data: { text, confidence } } = await worker.recognize(imageBlob)
+            console.log('📝 OCR text (pass 1):', (text || '').trim())
+            console.log('📊 OCR confidence (pass 1):', confidence)
+
+            // Fallback: tune parameters if low-confidence/no text
+            if (!text || confidence < 20 || text.trim().length < 3) {
+                try {
+                    await worker.setParameters({
+                        tessedit_pageseg_mode: String(PSM.SPARSE_TEXT),
+                        preserve_interword_spaces: '1'
+                    } as any)
+                } catch {}
+
+                const second = await worker.recognize(imageBlob)
+                const text2 = (second.data.text || '').trim()
+                const conf2 = second.data.confidence
+                console.log('📝 OCR text (pass 2):', text2)
+                console.log('📊 OCR confidence (pass 2):', conf2)
+                if (text2.length > text.trim().length) {
+                    text = text2
+                    confidence = conf2
+                }
+            }
+
             await worker.terminate()
 
-            console.log('📝 OCR text:', text.trim())
-            console.log('📊 OCR confidence:', confidence)
-
-            if (!text || confidence < 20) {
+            if (!text || confidence < 10) {
                 return []
             }
 
-            const words = text
+            const words: string[] = text
                 .toUpperCase()
                 .replace(/[^A-Z0-9\s]/g, ' ')
                 .split(/\s+/)
-                .filter(word => word.length > 1)
-                .filter(word => !['THE', 'AND', 'FOR', 'WITH', 'OF', 'IN', 'ON', 'AT'].includes(word))
+                .filter((word: string) => word.length > 1)
+                .filter((word: string) => !['THE', 'AND', 'FOR', 'WITH', 'OF', 'IN', 'ON', 'AT'].includes(word))
 
             return words
-        } catch (error) {
+        } catch (error: any) {
             console.log('❌ OCR failed:', error)
             return []
         }
@@ -592,10 +615,6 @@ export class MLService {
 
     private async loadModel() {
         // Model loading implementation
-        console.log('Model loading placeholder - implement based on your needs')
-    }
-
-    private async loadModel() {
         console.log('Model loading placeholder - implement based on your needs')
     }
 
