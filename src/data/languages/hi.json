@@ -1,0 +1,24 @@
+{
+    "ui": {
+        "title": "मेडीहेल्प - एआई दवा पहचान",
+        "capture_button": "कैप्चर और विश्लेषण",
+        "language_label": "भाषा:",
+        "history_title": "पहचान इतिहास",
+        "clear_history": "इतिहास साफ़ करें",
+        "camera_loading": "कैमरा लोड हो रहा है...",
+        "camera_active": "कैमरा सक्रिय - कैप्चर के लिए तैयार",
+        "camera_error": "कैमरा उपलब्ध नहीं है"
+    },
+    "messages": {
+        "medicine_recognized": "यह {name} है। खुराक: {min_dosage} से {max_dosage}। उपयोग: {uses}",
+        "no_recognition": "दवा की पहचान नहीं हो सकी",
+        "analysis_failed": "विश्लेषण असफल: {error}",
+        "language_changed": "भाषा हिंदी में बदल दी गई"
+    },
+    "medicine_info": {
+        "dosage": "खुराक",
+        "uses": "उपयोग",
+        "consult_doctor": "डॉक्टर से सलाह लें",
+        "consult_healthcare": "स्वास्थ्य सेवा प्रदाता से सलाह लें"
+    }
+}

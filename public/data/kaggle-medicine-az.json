@@ -1,0 +1,42 @@
+[
+    {
+        "id": "med_001",
+        "name": "Paracetamol",
+        "composition": "Acetaminophen 500mg",
+        "uses": "Pain relief, fever reduction",
+        "sideEffects": "Nausea, liver damage with overdose",
+        "manufacturer": "Generic Pharma"
+    },
+    {
+        "id": "med_002", 
+        "name": "PAN 40",
+        "composition": "Pantoprazole 40mg",
+        "uses": "Acid reflux, GERD, peptic ulcer",
+        "sideEffects": "Headache, diarrhea, nausea",
+        "manufacturer": "Alkem Laboratories"
+    },
+    {
+        "id": "med_003",
+        "name": "Dolo 650",
+        "composition": "Paracetamol 650mg", 
+        "uses": "Fever, body ache, headache",
+        "sideEffects": "Nausea, skin rash, liver problems",
+        "manufacturer": "Micro Labs"
+    },
+    {
+        "id": "med_004",
+        "name": "Crocin",
+        "composition": "Paracetamol 500mg",
+        "uses": "Fever, headache, toothache, cold",
+        "sideEffects": "Allergic reactions, nausea, stomach upset", 
+        "manufacturer": "GlaxoSmithKline"
+    },
+    {
+        "id": "med_005",
+        "name": "Ibuprofen",
+        "composition": "Ibuprofen 400mg",
+        "uses": "Pain relief, inflammation, fever, arthritis",
+        "sideEffects": "Stomach upset, heartburn, dizziness",
+        "manufacturer": "Abbott"
+    }
+]

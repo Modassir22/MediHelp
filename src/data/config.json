@@ -1,0 +1,8 @@
+{
+  "language": "hi \u0939\u093f\u0902\u0926\u0940",
+  "tts_rate": 150,
+  "tts_volume": 0.9,
+  "camera_index": 0,
+  "confidence_threshold": 0.5,
+  "max_history_items": 50
+}

@@ -1,0 +1,18 @@
+{
+  "total_medicines": 10,
+  "categories": [
+    "Analgesic",
+    "Antibiotic",
+    "Antihistamine"
+  ],
+  "manufacturers": [
+    "Sanofi",
+    "Aventis Pharma",
+    "GlaxoSmithKline",
+    "Micro Labs",
+    "Pfizer",
+    "Generic Pharma"
+  ],
+  "source": "Kaggle AZ Medicine Dataset of India",
+  "processed_at": "2025-09-22T03:36:02.561867"
+}

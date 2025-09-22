@@ -1,0 +1,44 @@
+{
+  "paracetamol": {
+    "name": "Paracetamol",
+    "min_dosage": "500mg",
+    "max_dosage": "1000mg",
+    "uses": "fever, headache, pain relief",
+    "medicine_id": "paracetamol"
+  },
+  "dolo_650": {
+    "name": "Dolo 650",
+    "min_dosage": "650mg",
+    "max_dosage": "650mg",
+    "uses": "fever, pain relief",
+    "medicine_id": "dolo_650"
+  },
+  "aspirin": {
+    "name": "Aspirin",
+    "min_dosage": "75mg",
+    "max_dosage": "325mg",
+    "uses": "pain relief, blood thinner, heart protection",
+    "medicine_id": "aspirin"
+  },
+  "ibuprofen": {
+    "name": "Ibuprofen",
+    "min_dosage": "200mg",
+    "max_dosage": "800mg",
+    "uses": "pain relief, inflammation, fever",
+    "medicine_id": "ibuprofen"
+  },
+  "amoxicillin": {
+    "name": "Amoxicillin",
+    "min_dosage": "250mg",
+    "max_dosage": "500mg",
+    "uses": "bacterial infections, respiratory infections",
+    "medicine_id": "amoxicillin"
+  },
+  "cetirizine": {
+    "name": "Cetirizine",
+    "min_dosage": "5mg",
+    "max_dosage": "10mg",
+    "uses": "allergies, hay fever, skin rash",
+    "medicine_id": "cetirizine"
+  }
+}

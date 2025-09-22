@@ -1,0 +1,24 @@
+{
+  "ui": {
+    "title": "MediHelp - AI Medicine Recognition",
+    "capture_button": "Capture & Analyze",
+    "language_label": "Language:",
+    "history_title": "Recognition History",
+    "clear_history": "Clear History",
+    "camera_loading": "Camera Loading...",
+    "camera_active": "Camera active - Ready to capture",
+    "camera_error": "Camera not available"
+  },
+  "messages": {
+    "medicine_recognized": "This is {name}. Dosage: {min_dosage} to {max_dosage}. Uses: {uses}",
+    "no_recognition": "Could not recognize the medicine",
+    "analysis_failed": "Analysis failed: {error}",
+    "language_changed": "Language changed to English"
+  },
+  "medicine_info": {
+    "dosage": "Dosage",
+    "uses": "Uses",
+    "consult_doctor": "Consult doctor",
+    "consult_healthcare": "Consult healthcare provider"
+  }
+}
