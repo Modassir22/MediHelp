@@ -287,15 +287,25 @@ export class MLService {
 
             // 1. Direct text matching (highest priority)
             const directMatchScore = this.calculateDirectMatch(medicine, ocrWords)
-            totalScore += directMatchScore * 0.5
+            totalScore += directMatchScore * 0.6
 
             // 2. Embedding similarity (ML approach)
             const embeddingScore = this.calculateEmbeddingSimilarity(queryEmbedding, medicine.embeddings || [])
-            totalScore += embeddingScore * 0.3
+            totalScore += embeddingScore * 0.25
 
             // 3. Fuzzy matching
             const fuzzyScore = this.calculateFuzzyMatch(medicine, ocrWords)
-            totalScore += fuzzyScore * 0.2
+            totalScore += fuzzyScore * 0.15
+
+            // 4. Numeric token boost (e.g., 650, 500, 40)
+            const composition = (medicine.composition || '').toLowerCase()
+            for (const w of ocrWords) {
+                if (/^\d{2,4}$/.test(w)) {
+                    if (composition.includes(w)) {
+                        totalScore += 0.2
+                    }
+                }
+            }
 
             console.log(`${medicine.name}: direct=${directMatchScore.toFixed(2)}, embedding=${embeddingScore.toFixed(2)}, fuzzy=${fuzzyScore.toFixed(2)}, total=${totalScore.toFixed(2)}`)
 
@@ -304,7 +314,7 @@ export class MLService {
             }
         }
 
-        if (bestMatch && bestMatch.score > 0.4) {
+        if (bestMatch && bestMatch.score > 0.25) {
             console.log('✅ Best match found:', bestMatch.medicine.name, 'Score:', bestMatch.score.toFixed(3))
             return bestMatch.medicine
         }
@@ -329,6 +339,11 @@ export class MLService {
 
             // Composition match
             if (composition.includes(cleanWord)) {
+                score += 0.8
+            }
+
+            // Numeric emphasis (mg strengths)
+            if (/^\d{2,4}$/.test(cleanWord) && composition.includes(cleanWord)) {
                 score += 0.8
             }
 
@@ -451,8 +466,8 @@ export class MLService {
                 return false
             }
 
-            const hasRealContent = await this.detectRealContent(imageBlob)
-            return hasRealContent
+            // Be permissive to reduce false negatives in varied lighting
+            return true
 
         } catch (error: any) {
             console.log('❌ Image validation failed:', error)
