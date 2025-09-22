@@ -454,14 +454,14 @@ export class MLService {
                 return false
             }
 
-            if (imageBlob.size < 1000 || imageBlob.size > 10 * 1024 * 1024) {
+            if (imageBlob.size < 300 || imageBlob.size > 20 * 1024 * 1024) {
                 console.log('❌ Image size invalid')
                 return false
             }
 
             const image = await this.blobToImage(imageBlob)
             
-            if (image.width < 50 || image.height < 50) {
+            if (image.width < 30 || image.height < 30) {
                 console.log('❌ Image dimensions too small')
                 return false
             }
@@ -470,8 +470,8 @@ export class MLService {
             return true
 
         } catch (error: any) {
-            console.log('❌ Image validation failed:', error)
-            return false
+            console.log('⚠️ Image validation error, allowing image:', error)
+            return true
         }
     }
 
